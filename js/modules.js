@@ -210,6 +210,48 @@ var FreerideModule = {
     }
 };
 
+var GooglePlayMusicModule = {
+    canHandleUrl: function(url) {
+        var validPatterns = [
+            ".*google.com/music.*"
+        ];
+        return urlMatchesOneOfPatterns(url, validPatterns);
+    },
+    getMediaType: function() {
+        return 'audio';
+    },
+    getPluginPath: function(url, callback) {
+        var urlMatch, baseUrl = 'plugin://plugin.audio.linuxwhatelse.gmusic';
+
+        if (urlMatch = url.match('#/track/([^/]+)/([^/]+)')) {
+            callback(baseUrl + '/track?track_id=' + urlMatch[1]);
+        }
+
+        if (urlMatch = url.match('#/album/([^/]+)')) {
+            callback(baseUrl + '/album?album_id=' + urlMatch[1], true);
+        }
+
+        if (urlMatch = url.match('#/artist/([^/]+)')) {
+            callback(baseUrl + '/artist?artist_id=' + urlMatch[1], true);
+        }
+
+        if (urlMatch = url.match('#/pl/([^/]+)')) {
+            callback(baseUrl + '/playlist?playlist_id=' + urlMatch[1], true);
+        }
+
+        if (urlMatch = url.match('#/ap/([^/]+)')) {
+            urlMatch[1] = urlMatch[1].replace('auto-playlist-recent', 'lastadded');
+            urlMatch[1] = urlMatch[1].replace('auto-playlist-thumbs-up', 'thumbsup');
+
+            callback(baseUrl + '/playlist?playlist_id=' + urlMatch[1], true);
+        }
+
+        if (urlMatch = url.match('#/wst/st/([^/]+)')) {
+            callback(baseUrl + '/station?station_id=' + urlMatch[1], true);
+        }
+    }
+};
+
 var HuluModule = {
     canHandleUrl: function(url) {
         var validPatterns = [
@@ -662,6 +704,7 @@ var allModules = [
     YoutubeModule,
     VimeoModule,
     FreerideModule,
+    GooglePlayMusicModule,
     CollegeHumorModule,
     DailyMotionModule,
     DailyMotionLiveModule,
