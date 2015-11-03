@@ -117,7 +117,7 @@ var ZdfMediathekModule = {
         var validPatterns = [
 		    ".*zdf.de/.*video/.*"
         ];
-		
+
         return urlMatchesOneOfPatterns(url, validPatterns);
     },
     getMediaType: function() {
@@ -125,7 +125,7 @@ var ZdfMediathekModule = {
     },
     getPluginPath: function(url, callback) {
 		var videoId = url.match('(https|http)://(www\.)?zdf.de/ZDFmediathek/#/beitrag/video/([^_&/#\?]+)/.*')[3];
-		
+
         callback('plugin://plugin.video.zdf_de_lite/?mode=playVideo&url=' + encodeURIComponent(videoId));
     }
 };
@@ -223,15 +223,15 @@ var GooglePlayMusicModule = {
     getPluginPath: function(url, callback) {
         var urlMatch, baseUrl = 'plugin://plugin.audio.linuxwhatelse.gmusic';
 
-        if (urlMatch = url.match('#/track/([^/]+)/([^/]+)')) {
-            callback(baseUrl + '/track?track_id=' + urlMatch[1]);
+        if (urlMatch = url.match('#/track/([^/]+)/[^/]*(/[^/]*/([^/]*))?') || url.match('/m/(T[^\?]+)(\\?t=([^-]+)_-_.+)?')) {
+            callback(baseUrl + '/track' + (urlMatch[3] ? '/' + urlMatch[3].replace(/[_\+]/g, ' ') : '') + '?track_id=' + urlMatch[1]);
         }
 
-        if (urlMatch = url.match('#/album/([^/]+)')) {
+        if (urlMatch = url.match('#/album/([^/]+)') || url.match('/m/(B[^\?]+)')) {
             callback(baseUrl + '/album?album_id=' + urlMatch[1], true);
         }
 
-        if (urlMatch = url.match('#/artist/([^/]+)')) {
+        if (urlMatch = url.match('#/artist/([^/]+)') || url.match('/m/(A[^\?]+)')) {
             callback(baseUrl + '/artist?artist_id=' + urlMatch[1], true);
         }
 
@@ -482,7 +482,7 @@ var YoutubeModule = {
 		var player = $('video')[0];
         if (url && url.match('v=([^&]+)')) {
             var videoId = url.match('v=([^&]+)')[1];
-			
+
             var $youtubeContextMenu = $('ul.html5-context-menu');
             $youtubeContextMenu.append('<li><span class="playtoxbmc-icon"></span><a id="playnow-' + videoId + '" class="yt-uix-button-menu-item html5-context-menu-link" target="_blank">Play Now</a></li>');
 			$youtubeContextMenu.append('<li><span class="playtoxbmc-icon"></span><a id="resume-' + videoId + '" class="yt-uix-button-menu-item html5-context-menu-link" target="_blank">Resume</a></li>');

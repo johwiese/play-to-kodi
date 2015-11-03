@@ -61,11 +61,11 @@ function initMenu() {
         queueLabel = 'Queue';
 
     $('.goog-menu.song-menu').prepend(createMenuItem(queueLabel).on('click', function() {
-        queueThis(getSongMenuDataPath());
+        queueThis(getTrackMenuDataPath());
     })).prepend(createMenuItem(playNextLabel).on('click', function() {
-        playThisNext(getSongMenuDataPath());
+        playThisNext(getTrackMenuDataPath());
     })).prepend(createMenuItem(playLabel).on('click', function() {
-        playThis(getSongMenuDataPath());
+        playThis(getTrackMenuDataPath());
     }));
 
     $('.goog-menu.album-menu').prepend(createMenuItem(queueLabel).on('click', function() {
@@ -111,11 +111,11 @@ function createMenuItem(label) {
     return menuItem;
 }
 
-function getSongMenuDataPath() {
+function getTrackMenuDataPath() {
     var trackId, albumId;
 
-    if ((trackId = getTrackId()) && (albumId = getAlbumId())) {
-        return '/track/' + trackId + '/' + albumId;
+    if ((trackId = getTrackId())) {
+        return '/track/' + trackId + '/' + (getAlbumId() || '') + '/' + (getTrackArtist() || '') + '/' + (getTrackTitle() || '');
     }
 }
 
@@ -159,6 +159,22 @@ function getTrackId() {
     }
 
     return dataId;
+}
+
+function getTrackTitle() {
+    var songRow = $('.song-row.selected-song-row');
+
+    if (songRow) {
+        return songRow.find('[data-col="title"]').text().trim();
+    }
+}
+
+function getTrackArtist() {
+    var songRow = $('.song-row.selected-song-row');
+
+    if (songRow) {
+        return songRow.find('[data-col="artist"]').text().trim();
+    }
 }
 
 function getAlbumId() {
