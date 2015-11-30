@@ -165,7 +165,7 @@ function getTrackTitle() {
     var songRow = $('.song-row.selected-song-row');
 
     if (songRow) {
-        return songRow.find('[data-col="title"]').text().trim();
+        return songRow.find('[data-col="title"] .column-content').text().trim();
     }
 }
 
@@ -173,7 +173,7 @@ function getTrackArtist() {
     var songRow = $('.song-row.selected-song-row');
 
     if (songRow) {
-        return songRow.find('[data-col="artist"]').text().trim();
+        return songRow.find('[data-col="artist"] .column-content').text().trim();
     }
 }
 
