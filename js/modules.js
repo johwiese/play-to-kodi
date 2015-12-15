@@ -697,6 +697,26 @@ var SVTPLAYModule = {
   }
 };
 
+var CdaModule = {
+    canHandleUrl: function(url) {
+        var validPatterns = [
+            ".*cda.pl/.*"
+        ];
+        return urlMatchesOneOfPatterns(url, validPatterns);
+    },
+    getMediaType: function() {
+        return 'video';
+    },
+    getPluginPath: function(url, callback) {
+        chrome.tabs.sendMessage(currentTabId, {action: 'getVideoSrc'}, function (response) {
+            if (response) {
+                callback(response.videoSrc);
+            }
+        });
+    }
+};
+
+
 var allModules = [
     DirectVideoLinkModule,
     DirectAudioLinkModule,
@@ -729,5 +749,6 @@ var allModules = [
     KinoLiveModule,
     VesselLabModule,
     Mp4UploadModule,
-    ZdfMediathekModule
+    ZdfMediathekModule,
+    CdaModule
 ];
