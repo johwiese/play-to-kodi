@@ -14,7 +14,7 @@ var DirectVideoLinkModule = {
         var supportedVideoExtensions = ['avi', 'wmv', 'asf', 'flv', 'mkv', 'mp4', 'webm', 'm4v'];
         for (var i = 0; i < supportedVideoExtensions.length; i++) {
             var extension = supportedVideoExtensions[i];
-            var regex = '^.*\.(' + extension + '|' + extension + '\?.+)$';
+            var regex = '^.*\\.(' + extension + '|' + extension + '\\?.*)$';
             if (url.match(regex)) {
                 return true;
             }
@@ -38,7 +38,7 @@ var DirectAudioLinkModule = {
         var supportedVideoExtensions = ['mp3', 'ogg', 'midi', 'wav', 'aiff', 'aac', 'flac', 'ape', 'wma', 'm4a', 'mka'];
         for (var i = 0; i < supportedVideoExtensions.length; i++) {
             var extension = supportedVideoExtensions[i];
-            var regex = '^.*\.' + extension + "$";
+            var regex = '^.*\\.' + extension + "$";
             if (url.match(regex)) {
                 return true;
             }
@@ -51,6 +51,21 @@ var DirectAudioLinkModule = {
     },
     getPluginPath: function(url, callback) {
         callback(url);
+    }
+};
+
+var DumpertModule = {
+    canHandleUrl: function(url) {
+        var validPatterns = [
+            '.*dumpert.nl/mediabase/*'
+        ];
+        return urlMatchesOneOfPatterns(url, validPatterns);
+    },
+    getMediaType: function() {
+        return 'video';
+    },
+    getPluginPath: function(url, callback) {
+        callback('plugin://plugin.video.dumpert/?action=play&video_page_url=' + encodeURIComponent(url));
     }
 };
 
@@ -68,6 +83,8 @@ var TorrentsLinkModule = {
     getPluginPath: function(url, callback) {
         if (localStorage['magnetAddOn'] == 'pulsar') {
             callback('plugin://plugin.video.pulsar/play?uri=' + encodeURIComponent(url));
+        } else if (localStorage['magnetAddOn'] == 'quasar') {
+            callback('plugin://plugin.video.quasar/play?uri=' + encodeURIComponent(url));
         } else if (localStorage['magnetAddOn'] == 'kmediatorrent') {
             callback('plugin://plugin.video.kmediatorrent/play/' + encodeURIComponent(url));
         } else if (localStorage['magnetAddOn'] == 'torrenter') {
@@ -720,6 +737,7 @@ var CdaModule = {
 var allModules = [
     DirectVideoLinkModule,
     DirectAudioLinkModule,
+    DumpertModule,
     TorrentsLinkModule,
     YoutubeModule,
     VimeoModule,
