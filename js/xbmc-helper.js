@@ -21,7 +21,8 @@ function getPluginPath(url, callback) {
         if (module.canHandleUrl(url)) {
             foundModule = true;
             if (debugLogsEnabled) console.log("Found module to handle url: " + url);
-            module.getPluginPath(url, function(path, isDirectory) {
+
+            module.getPluginPath(url, getAddOnVersion, function(path, isDirectory) {
                 if (debugLogsEnabled) console.log("Path to play media: " + path);
                 callback(module.getMediaType(), path, isDirectory);
             });
@@ -29,6 +30,13 @@ function getPluginPath(url, callback) {
     }
 
     if (debugLogsEnabled && !foundModule) console.log("No module found to handle url: " + url + "");
+}
+
+function getAddOnVersion(addonId, callback) {
+    var json = '{"jsonrpc": "2.0", "method": "Addons.GetAddonDetails", "params": {"addonid": "' + addonId + '", "properties": ["version"]}, "id": 1}';
+    ajaxPost(json, function(response) {
+        callback(response.result.addon.version);
+    });
 }
 
 function queueItem(url, callback) {
@@ -543,6 +551,6 @@ function resume(currentTime, callback){
 		else{
 			resume(currentTime, callback);
 		}
-	}); 
+	});
 }
 
