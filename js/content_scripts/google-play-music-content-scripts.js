@@ -16,11 +16,22 @@ $(window).on('load', initMenu);
 var tracks = {}, albums = {}, artists = {};
 
 function initMusic(userId) {
-    tracks = {};
-    albums = {};
-    artists = {};
+    if (typeof userId != 'string') {
+        return;
+    }
 
-    window.indexedDB.open('music_' + userId).onsuccess = function(event) {
+    var request = window.indexedDB.open('music_' + userId);
+
+    request.onupgradeneeded = function(event) {
+        // Abort if the db does not exists.
+        event.target.transaction.abort();
+    };
+
+    request.onsuccess = function(event) {
+        tracks = {};
+        albums = {};
+        artists = {};
+
         var db = event.target.result;
 
         var keys = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'];
