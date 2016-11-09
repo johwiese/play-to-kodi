@@ -241,7 +241,7 @@ function createHtml5VideoContextMenus() {
             });
         }
     }, onContextMenuCreated);
-    
+
     chrome.contextMenus.create({
         title: "Play now",
         contexts: ["audio"],

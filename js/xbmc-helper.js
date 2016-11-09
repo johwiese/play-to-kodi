@@ -203,10 +203,6 @@ function addItemsToPlaylist(items, callback, resumeTime) {
     if (contentType != 'picture') {
         getPlaylistId(contentType, function (playlistId) {
             getActivePlayerId(function (playerId) {
-                //if nothing is playing, clear the playlist
-                if (playerId == null) {
-                    clearPlaylist(function() {});
-                }
                 var addToPlaylist = "[";
                 for (var i = 0; i < items.length; i++) {
                     if (i > 0) {
