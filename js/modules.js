@@ -241,15 +241,15 @@ var GooglePlayMusicModule = {
         var urlMatch, baseUrl = 'plugin://plugin.audio.linuxwhatelse.gmusic';
 
         if (urlMatch = url.match('#/track/([^/]+)/[^/]*(/[^/]*/([^/]*))?') || url.match('/m/(T[^\?]+)(\\?t=([^-]+)_-_.+)?')) {
-            callback(baseUrl + '/track' + (urlMatch[3] ? '/' + urlMatch[3].replace(/[_\+]/g, ' ') : '') + '?track_id=' + urlMatch[1]);
+            callback(baseUrl + '/track/' + urlMatch[1] + (urlMatch[3] ? '/' + urlMatch[3].replace(/[_\+]/g, ' ') : ''));
         }
 
         if (urlMatch = url.match('#/album/([^/]+)') || url.match('/m/(B[^\?]+)')) {
-            callback(baseUrl + '/album?album_id=' + urlMatch[1], true);
+            callback(baseUrl + '/album/' + urlMatch[1], true);
         }
 
         if (urlMatch = url.match('#/artist/([^/]+)') || url.match('/m/(A[^\?]+)')) {
-            callback(baseUrl + '/artist?artist_id=' + urlMatch[1], true);
+            callback(baseUrl + '/artist/' + urlMatch[1], true);
         }
 
         if (urlMatch = url.match('#/pl/([^/]+)')) {
