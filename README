@@ -1,24 +1,36 @@
-A Google Chrome Extension for sending online content to be played on XBMC/Kodi.
-Supported websites include 
+A Google Chrome/Firefox Extension for sending online content to be played on XBMC/Kodi.
+Supported websites include
 
- * YouTube
- * Vimeo
- * Google Play Music
+ * Acestream
+ * AnimeLab
+ * ARD Mediathek (German TV Station)
+ * Cda.pl
  * CollegeHumor
+ * DailyMotion
  * eBaumsWorld
- * LiveLeak
- * Twitch.tv
- * Khan Academy
+ * Ex.ua
+ * Facebook
+ * Freeride.se
+ * Google Play Music
  * Hulu
+ * Katsomo.fi
+ * Khan Academy
+ * Kino-live (Russian)
+ * LiveLeak
+ * Lynda
+ * MP4Upload
+ * MixCloud
+ * MyCloudPlayers
+ * Ruutu.fi
+ * Sopcast
  * SoundCloud
  * StreamCloud
- * MixCloud
- * Freeride.se
- * ARDMediathek (german tv station)
- * Katsomo.fi
- * Ruutu.fi
- * Yle Areena
- * AnimeLab
+ * SVTPlay (Swedish TV Station)
+ * Torrent
+ * Twitch.tv
+ * Urgant Show (Russian Talk Show)
  * Vessel
- * SVTPlay (Swedish TV Station) 
- * Cda.pl
+ * Vimeo
+ * Yle Areena
+ * YouTube
+ * ZDF Mediathek (German TV Station)
