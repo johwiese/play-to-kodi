@@ -127,6 +127,66 @@ var DailyMotionLiveModule = {
     }
 };
 
+var DirectAudioLinkModule = {
+    canHandleUrl: function(url) {
+        var supportedVideoExtensions = ['mp3', 'ogg', 'midi', 'wav', 'aiff', 'aac', 'flac', 'ape', 'wma', 'm4a', 'mka'];
+        for (var i = 0; i < supportedVideoExtensions.length; i++) {
+            var extension = supportedVideoExtensions[i];
+            var regex = '^.*\\.' + extension + "$";
+            if (url.match(regex)) {
+                return true;
+            }
+        }
+
+        return false;
+    },
+    getMediaType: function() {
+        return 'audio';
+    },
+    getPluginPath: function(url, getAddOnVersion, callback) {
+        callback(url);
+    }
+};
+
+var DirectVideoLinkModule = {
+    canHandleUrl: function(url) {
+        var supportedVideoExtensions = ['avi', 'wmv', 'asf', 'flv', 'mkv', 'mp4', 'webm', 'm4v'];
+        for (var i = 0; i < supportedVideoExtensions.length; i++) {
+            var extension = supportedVideoExtensions[i];
+            var regex = '^.*\\.(' + extension + '|' + extension + '\\?.*)$';
+            if (url.match(regex)) {
+                return true;
+            }
+        }
+
+        return false;
+    },
+    getMediaType: function() {
+        return 'video';
+    },
+    getPluginPath: function(url, getAddOnVersion, callback) {
+        callback(url);
+    },
+    getEmbedSelector: function() {
+        return 'video';
+    }
+};
+
+var DumpertModule = {
+    canHandleUrl: function(url) {
+        var validPatterns = [
+            '.*dumpert.nl/mediabase/*'
+        ];
+        return urlMatchesOneOfPatterns(url, validPatterns);
+    },
+    getMediaType: function() {
+        return 'video';
+    },
+    getPluginPath: function(url, getAddOnVersion, callback) {
+        callback('plugin://plugin.video.dumpert/?action=play&video_page_url=' + encodeURIComponent(url));
+    }
+};
+
 var eBaumsWorldModule = {
     canHandleUrl: function(url) {
         var validPatterns = [
@@ -257,7 +317,7 @@ var HuluModule = {
                         var eId = JSON.parse(response2.eid);
                         callback(
                             'plugin://plugin.video.hulu/?mode=\\"TV_play\\"&url=\\"' + encodeURIComponent(contentId) + '\\"&videoid=\\"' +
-                                encodeURIComponent(videoId) + '\\"&eid=\\"' + encodeURIComponent(eId) + '\\"'
+                            encodeURIComponent(videoId) + '\\"&eid=\\"' + encodeURIComponent(eId) + '\\"'
                         );
                     }
                 })
@@ -372,10 +432,10 @@ var Mp4UploadModule = {
         var id = url.split("/")[3];
         // get embedded data
         $.ajax({ url: 'http://www.mp4upload.com/embed-' + id + ".html", success: function(data) {
-                var found = data.match("'file': '(.+?)'");
-                if (found) {
-                    callback(found[1]);
-                }
+            var found = data.match("'file': '(.+?)'");
+            if (found) {
+                callback(found[1]);
+            }
         }});
     }
 };
@@ -482,6 +542,23 @@ var StreamCloudModule = {
     }
 };
 
+var SVTOppetArkivModule = {
+  canHandleUrl: function( url ){
+    var validPatterns = [
+      ".*oppetarkiv.se/(video|klipp)/.*/.*"
+    ];
+    return urlMatchesOneOfPatterns(url, validPatterns);
+  },
+  getMediaType: function(){
+    return 'video';
+  },
+  getPluginPath: function(url, getAddOnVersion, callback) {
+      var videoId = url.match('(https|http):\/\/(www\.)?oppetarkiv\.se(\/(video|klipp)\/[0-9]+\/.*)')[3];
+      videoId = videoId.replace(/(\?.*)/,""); // ignore everything after ? (start=auto, tab=, position=)
+      callback('plugin://plugin.video.oppetarkiv/?url=' + encodeURIComponent(videoId) + "&mode=video");
+  }
+};
+
 var SVTPLAYModule = {
   canHandleUrl: function(url) {
       var validPatterns = [
@@ -493,8 +570,8 @@ var SVTPLAYModule = {
       return 'video';
   },
   getPluginPath: function(url, getAddOnVersion, callback) {
-      var videoId = url.match('(https|http):\/\/(www\.)?svtplay\.se(\/(video|klipp)\/[0-9]{7}\/.*)')[3];
-            videoId = videoId.replace(/(\?.*)/,""); // ignore everything after ? (start=auto, tab=, position=)
+      var videoId = url.match('(https|http):\/\/(www\.)?svtplay\.se(\/(video|klipp)\/[0-9]+\/.*)')[3];
+      videoId = videoId.replace(/(\?.*)/,""); // ignore everything after ? (start=auto, tab=, position=)
       callback('plugin://plugin.video.svtplay/?url=' + encodeURIComponent(videoId) + "&mode=video");
   }
 };
@@ -511,14 +588,17 @@ var TorrentsLinkModule = {
         return 'video';
     },
     getPluginPath: function(url, getAddOnVersion, callback) {
-        if (localStorage['magnetAddOn'] == 'pulsar') {
+        var magnetAddOn = localStorage['magnetAddOn'];
+        if (magnetAddOn == 'pulsar') {
             callback('plugin://plugin.video.pulsar/play?uri=' + encodeURIComponent(url));
-        } else if (localStorage['magnetAddOn'] == 'quasar') {
+        } else if (magnetAddOn == 'quasar') {
             callback('plugin://plugin.video.quasar/play?uri=' + encodeURIComponent(url));
-        } else if (localStorage['magnetAddOn'] == 'kmediatorrent') {
+        } else if (magnetAddOn == 'kmediatorrent') {
             callback('plugin://plugin.video.kmediatorrent/play/' + encodeURIComponent(url));
-        } else if (localStorage['magnetAddOn'] == 'torrenter') {
+        } else if (magnetAddOn == 'torrenter') {
             callback('plugin://plugin.video.torrenter/?action=playSTRM&url=' + encodeURIComponent(url));
+        } else if (magnetAddOn == 'yatp') {
+            callback('plugin://plugin.video.yatp/?action=play&torrent=' + encodeURIComponent(url));
         } else {
             callback('plugin://plugin.video.xbmctorrent/play/' + encodeURIComponent(url));
         }
@@ -657,26 +737,36 @@ var YoutubeModule = {
         return 'video';
     },
     getPluginPath: function(url, getAddOnVersion, callback) {
-        if (url.match('v=([^&]+)')) {
-            var videoId = url.match('v=([^&]+)')[1];
-            callback('plugin://plugin.video.youtube/play/?video_id=' + videoId);
-        }
+        getAddOnVersion('plugin.video.youtube', function(version) {
+            var pluginUrl = 'plugin://plugin.video.youtube/?action=play_video&videoid=';
+            var versionNumbers = version.split('.');
+            if (parseInt(versionNumbers[0]) > 5
+                || (parseInt(versionNumbers[0]) >= 5 && parseInt(versionNumbers[1]) > 3)
+                || (parseInt(versionNumbers[0]) >= 5 && parseInt(versionNumbers[1]) >= 3 && parseInt(versionNumbers[2]) >= 6)) {
+                pluginUrl = 'plugin://plugin.video.youtube/play/?video_id=';
+            }
 
-        if (url.match('.*youtu.be/(.+)')) {
-            var videoId = url.match('.*youtu.be/(.+)')[1];
-            callback('plugin://plugin.video.youtube/play/?video_id=' + videoId);
-        }
+            if (url.match('v=([^&]+)')) {
+                var videoId = url.match('v=([^&]+)')[1];
+                callback(pluginUrl + videoId);
+            }
+
+            if (url.match('.*youtu.be/(.+)')) {
+                var videoId = url.match('.*youtu.be/(.+)')[1];
+                callback(pluginUrl + videoId);
+            }
+        })
     },
     createCustomContextMenus: function() {
         //Create context menus for embedded youtube videos
         var url = $('a.html5-title-logo').attr('href');
-    var player = $('video')[0];
+        var player = $('video')[0];
         if (url && url.match('v=([^&]+)')) {
             var videoId = url.match('v=([^&]+)')[1];
 
             var $youtubeContextMenu = $('ul.html5-context-menu');
             $youtubeContextMenu.append('<li><span class="playtoxbmc-icon"></span><a id="playnow-' + videoId + '" class="yt-uix-button-menu-item html5-context-menu-link" target="_blank">Play Now</a></li>');
-      $youtubeContextMenu.append('<li><span class="playtoxbmc-icon"></span><a id="resume-' + videoId + '" class="yt-uix-button-menu-item html5-context-menu-link" target="_blank">Resume</a></li>');
+            $youtubeContextMenu.append('<li><span class="playtoxbmc-icon"></span><a id="resume-' + videoId + '" class="yt-uix-button-menu-item html5-context-menu-link" target="_blank">Resume</a></li>');
             $youtubeContextMenu.append('<li><span class="playtoxbmc-icon"></span><a id="queue-' + videoId + '" class="yt-uix-button-menu-item html5-context-menu-link" target="_blank">Queue</a></li>');
             $youtubeContextMenu.append('<li><span class="playtoxbmc-icon"></span><a id="playnext-' + videoId + '" class="yt-uix-button-menu-item html5-context-menu-link" target="_blank">Play this Next</a></li>');
             $('.playtoxbmc-icon')
@@ -691,8 +781,8 @@ var YoutubeModule = {
                 chrome.runtime.sendMessage({action: 'playThis', url: url}, function (response) {});
                 $('ul.html5-context-menu').hide();
             });
-			$('#resume-' + videoId).click(function () {
-				player.pause();
+            $('#resume-' + videoId).click(function () {
+                player.pause();
                 chrome.runtime.sendMessage({action: 'resume', url: url, currentTime: Math.round(player.currentTime)}, function (response) {});
                 $('ul.html5-context-menu').hide();
             });
@@ -747,6 +837,24 @@ var XnxxModule = {
     }
 };
 
+var SeasonvarModule = {
+    canHandleUrl: function(url) {
+        var validPatterns = [
+            "^https?://(www\\.)?seasonvar\\.ru/serial-\\d+-"
+        ];
+        return urlMatchesOneOfPatterns(url, validPatterns);
+    },
+    getMediaType: function() {
+        return 'video';
+    },
+    getPluginPath: function(url, getAddOnVersion, callback) {
+        chrome.tabs.sendMessage(currentTabId, {action: 'getVideoSrc'}, function (response) {
+            if (response) {
+                callback(response.videoSrc);
+            }
+        });
+    }
+};
 
 var allModules = [
     AcestreamModule,
@@ -756,6 +864,9 @@ var allModules = [
     CollegeHumorModule,
     DailyMotionModule,
     DailyMotionLiveModule,
+    DirectAudioLinkModule,
+    DirectVideoLinkModule,
+    DumpertModule,
     eBaumsWorldModule,
     ExuaModule,
     FacebookModule,
@@ -770,9 +881,11 @@ var allModules = [
     Mp4UploadModule,
     MyCloudPlayersModule,
     RuutuModule,
+    SeasonvarModule,
     SopcastModule,
     SoundcloudModule,
     StreamCloudModule,
+    SVTOppetArkivModule,
     SVTPLAYModule,
     TorrentsLinkModule,
     TwitchTvModule,
