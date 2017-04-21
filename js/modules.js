@@ -631,22 +631,32 @@ var TwitchTvModule = {
         return 'video';
     },
     getPluginPath: function(url, getAddOnVersion, callback) {
-        if (url.match('v=([^&]+)')) {
-            var videoId = url.match('v=([^&]+)')[1];
-            callback('plugin://plugin.video.youtube/play/?video_id=' + videoId);
-        }
+        getAddOnVersion('plugin.video.twitch', function(version) {
+            console.log(version);
+            let videoId;
+            let liveVideo = false;
+            let pluginPath;
+            let regexMatch;
+            let versionNumber = Number.parseFloat(version);
 
-        if (url.match('.*youtu.be/(.+)')) {
-            var videoId = url.match('.*youtu.be/(.+)')[1];
-            callback('plugin://plugin.video.youtube/play/?video_id=' + videoId);
-        }
-    },
-    createCustomContextMenus: function() {
-        //Create context menus for embedded youtube videos
-        var url = $('a.html5-title-logo').attr('href');
-		var player = $('video')[0];
-        if (url && url.match('v=([^&]+)')) {
-            var videoId = url.match('v=([^&]+)')[1];
+            if (regexMatch = url.match('^(?:https|http)://(?:www\.)?twitch.tv/videos/([^&/#\?]+).*$')) {
+                videoId = regexMatch[1];
+            } else if (regexMatch = url.match('^(?:https|http)://(?:www\.)?twitch.tv/([^&/#\?]+).*$')) {
+                liveVideo = true;
+                videoId = regexMatch[1];
+            }
+
+            if (versionNumber >= 2.0) {
+                if (liveVideo) {
+                    chrome.tabs.sendMessage(currentTabId, {action: 'getChannelId'}, function (response) {
+                        if (response) {
+                            let channelId = response.channelId;
+                            callback('plugin://plugin.video.twitch/?mode=play&channel_id=' + channelId + '&name=' + videoId);
+                        }
+                    });
+                } else {
+                    callback('plugin://plugin.video.twitch/?mode=play&video_id=' + videoId);
+                }
 
             } else {
                 if (liveVideo) {
