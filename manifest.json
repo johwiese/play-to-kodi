@@ -41,7 +41,7 @@
         "js": ["js/jquery-2.1.4.min.js", "js/shared.js", "js/content_scripts/soundcloud-content-scripts.js"]
     }, {
         "matches": ["*://play.google.com/music/*"],
-        "js": ["js/jquery-2.1.4.min.js", "js/shared.js", "js/content_scripts/google-play-music-content-scripts.js"],
+        "js": ["js/jquery-2.1.4.min.js", "js/jquery.waituntilexists.js", "js/shared.js", "js/content_scripts/google-play-music-content-scripts.js"],
         "run_at": "document_end"
     }, {
         "matches": ["*://streamcloud.eu/*"],

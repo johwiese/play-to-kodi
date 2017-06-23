@@ -9,7 +9,7 @@ window.addEventListener('message', function(event) {
     }
 });
 
-$(window).on('load', initMenu);
+$('.goog-menu:first').waitUntilExists(initMenu, true);
 
 // ---
 
