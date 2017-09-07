@@ -929,10 +929,10 @@ var SeasonvarModule = {
     }
 };
 
-var VivoModule = {
+var SolarmoviezModule= {
     canHandleUrl: function(url) {
         var validPatterns = [
-            ".*vivo.sx/([a-zA-Z0-9]+)"
+            ".*solarmoviez.to/*"
         ];
         return urlMatchesOneOfPatterns(url, validPatterns);
     },
@@ -940,7 +940,7 @@ var VivoModule = {
         return 'video';
     },
     getPluginPath: function(url, getAddOnVersion, callback) {
-        chrome.tabs.sendMessage(currentTabId, {action: 'getVivoVideo'}, function (response) {
+        chrome.tabs.sendMessage(currentTabId, {action: 'getSolarmoviezVideo'}, function (response) {
             if (response) {
                 callback(response.url);
             }
