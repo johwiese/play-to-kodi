@@ -888,66 +888,6 @@ var ZdfMediathekModule = {
     }
 };
 
-var XnxxModule = {
-    canHandleUrl: function(url) {
-        var validPatterns = [
-            ".*xnxx.com/.*"
-        ];
-        return urlMatchesOneOfPatterns(url, validPatterns);
-    },
-    getMediaType: function() {
-        return 'video';
-    },
-    getPluginPath: function(url, getAddOnVersion, callback) {
-        chrome.tabs.query({active: true,lastFocusedWindow: true}, function (tab) {
-            var tab = tab[0];
-            chrome.tabs.sendMessage(tab.id, {action: 'getVideoSrc'}, function (response) {
-                if (response) {
-                    callback(response.videoSrc);
-                }
-            });
-        });
-    }
-};
-
-var SeasonvarModule = {
-    canHandleUrl: function(url) {
-        var validPatterns = [
-            "^https?://(www\\.)?seasonvar\\.ru/serial-\\d+-"
-        ];
-        return urlMatchesOneOfPatterns(url, validPatterns);
-    },
-    getMediaType: function() {
-        return 'video';
-    },
-    getPluginPath: function(url, getAddOnVersion, callback) {
-        chrome.tabs.sendMessage(currentTabId, {action: 'getVideoSrc'}, function (response) {
-            if (response) {
-                callback(response.videoSrc);
-            }
-        });
-    }
-};
-
-var SolarmoviezModule= {
-    canHandleUrl: function(url) {
-        var validPatterns = [
-            ".*solarmoviez.to/*"
-        ];
-        return urlMatchesOneOfPatterns(url, validPatterns);
-    },
-    getMediaType: function() {
-        return 'video';
-    },
-    getPluginPath: function(url, getAddOnVersion, callback) {
-        chrome.tabs.sendMessage(currentTabId, {action: 'getSolarmoviezVideo'}, function (response) {
-            if (response) {
-                callback(response.url);
-            }
-        });
-    }
-};
-
 var allModules = [
     AcestreamModule,
     AnimeLabModule,
