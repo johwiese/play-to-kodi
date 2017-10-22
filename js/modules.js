@@ -20,7 +20,7 @@ var AcestreamModule = {
         return 'video';
     },
     getPluginPath: function(url, getAddOnVersion, callback) {
-        callback('plugin://plugin.video.p2p-streams/?url=' + encodeURIComponent(url) + '&mode=1&name=acestream+title');
+        callback('plugin://program.plexus/?url=' + encodeURIComponent(url) + '&mode=1&name=acestream+title');
     }
 };
 
@@ -214,7 +214,7 @@ var ExuaModule = {
     getMediaType: function() {
         return 'video';
     },
-    getPluginPath: function(url, callback) {
+    getPluginPath: function(url, getAddOnVersion, callback) {
         callback(url);
     }
 };
@@ -229,7 +229,7 @@ var FacebookModule = {
     getMediaType: function() {
         return 'video';
     },
-    getPluginPath: function(url, callback) {
+    getPluginPath: function(url, getAddOnVersion, callback) {
         chrome.tabs.sendMessage(currentTabId, {action: 'getFacebookVideoUrl'}, function (response) {
             if (response) {
                 var facebookUrl = response.url;
@@ -456,6 +456,25 @@ var MyCloudPlayersModule = {
     }
 };
 
+var PornhubModule = {
+    canHandleUrl: function(url) {
+        var validPatterns = [
+            "^https?://(www\\.)?pornhub\\.com/view_video"
+        ];
+        return urlMatchesOneOfPatterns(url, validPatterns);
+    },
+    getMediaType: function() {
+        return 'video';
+    },
+    getPluginPath: function(url, getAddOnVersion, callback) {
+        chrome.tabs.sendMessage(currentTabId, {action: 'getVideoSrc'}, function (response) {
+            if (response) {
+                callback(response.videoSrc);
+            }
+        });
+    }
+};
+
 var RuutuModule = {
     canHandleUrl: function(url) {
         var validPatterns = [
@@ -471,6 +490,44 @@ var RuutuModule = {
     }
 };
 
+var SeasonvarModule = {
+    canHandleUrl: function(url) {
+        var validPatterns = [
+            "^https?://(www\\.)?seasonvar\\.ru/serial-\\d+-"
+        ];
+        return urlMatchesOneOfPatterns(url, validPatterns);
+    },
+    getMediaType: function() {
+        return 'video';
+    },
+    getPluginPath: function(url, getAddOnVersion, callback) {
+        chrome.tabs.sendMessage(currentTabId, {action: 'getVideoSrc'}, function (response) {
+            if (response) {
+                callback(response.videoSrc);
+            }
+        });
+    }
+};
+
+var SolarmoviezModule= {
+    canHandleUrl: function(url) {
+        var validPatterns = [
+            ".*solarmoviez.to/*"
+        ];
+        return urlMatchesOneOfPatterns(url, validPatterns);
+    },
+    getMediaType: function() {
+        return 'video';
+    },
+    getPluginPath: function(url, getAddOnVersion, callback) {
+        chrome.tabs.sendMessage(currentTabId, {action: 'getSolarmoviezVideo'}, function (response) {
+            if (response) {
+                callback(response.url);
+            }
+        });
+    }
+};
+
 var SopcastModule = {
     canHandleUrl: function(url) {
         var validPatterns = [
@@ -482,7 +539,7 @@ var SopcastModule = {
         return 'video';
     },
     getPluginPath: function(url, getAddOnVersion, callback) {
-        callback('plugin://plugin.video.p2p-streams/?url=' + encodeURIComponent(url) + '&mode=2&name=title+sopcast');
+        callback('plugin://program.plexus/?url=' + encodeURIComponent(url) + '&mode=2&name=title+sopcast');
     }
 };
 
@@ -624,13 +681,13 @@ var TwitchTvModule = {
             let regexMatch;
             let versionNumber = Number.parseFloat(version);
 
-            if (regexMatch = url.match('^(?:https|http)://(?:www\.)?twitch.tv/videos/([^&/#\?]+).*$')) {
+            if ((regexMatch = url.match('^(?:https|http)://(?:www\.)?twitch.tv/videos/([^&/#\?]+).*$'))) {
                 videoId = regexMatch[1];
-            } else if (regexMatch = url.match('^(?:https|http)://(?:www\.)?twitch.tv/([^&/#\?]+).*$')) {
+            } else if ((regexMatch = url.match('^(?:https|http)://(?:www\.)?twitch.tv/([^&/#\?]+).*$'))) {
                 liveVideo = true;
                 videoId = regexMatch[1];
             }
-            
+
             if (versionNumber >= 2.0) {
                 if (liveVideo) {
                     chrome.tabs.sendMessage(currentTabId, {action: 'getChannelId'}, function (response) {
@@ -723,6 +780,47 @@ var VimeoModule = {
     }
 };
 
+var VivoModule = {
+    canHandleUrl: function(url) {
+        var validPatterns = [
+            ".*vivo.sx/([a-zA-Z0-9]+)"
+        ];
+        return urlMatchesOneOfPatterns(url, validPatterns);
+    },
+    getMediaType: function() {
+        return 'video';
+    },
+    getPluginPath: function(url, getAddOnVersion, callback) {
+        chrome.tabs.sendMessage(currentTabId, {action: 'getVivoVideo'}, function (response) {
+            if (response) {
+                callback(response.url);
+            }
+        });
+    }
+};
+
+var XnxxModule = {
+    canHandleUrl: function(url) {
+        var validPatterns = [
+            ".*xnxx.com/.*"
+        ];
+        return urlMatchesOneOfPatterns(url, validPatterns);
+    },
+    getMediaType: function() {
+        return 'video';
+    },
+    getPluginPath: function(url, getAddOnVersion, callback) {
+        chrome.tabs.query({active: true,lastFocusedWindow: true}, function (tab) {
+            var tab = tab[0];
+            chrome.tabs.sendMessage(tab.id, {action: 'getVideoSrc'}, function (response) {
+                if (response) {
+                    callback(response.videoSrc);
+                }
+            });
+        });
+    }
+};
+
 var YleAreenaModule = {
     canHandleUrl: function(url) {
         var validPatterns = [
@@ -786,7 +884,7 @@ var YoutubeModule = {
             $youtubeContextMenu.append('<li><span class="playtoxbmc-icon"></span><a id="queue-' + videoId + '" class="yt-uix-button-menu-item html5-context-menu-link" target="_blank">Queue</a></li>');
             $youtubeContextMenu.append('<li><span class="playtoxbmc-icon"></span><a id="playnext-' + videoId + '" class="yt-uix-button-menu-item html5-context-menu-link" target="_blank">Play this Next</a></li>');
             $('.playtoxbmc-icon')
-                .css('background', 'url(\'' + chrome.extension.getURL('/images/icon.png') + '\') no-repeat 3px 3px')
+                .css('background', 'url(\'' + chrome.runtime.getURL('/images/icon.png') + '\') no-repeat 3px 3px')
                 .css('height', '25px')
                 .css('width', '25px')
                 .css('border', 'none')
@@ -832,46 +930,6 @@ var ZdfMediathekModule = {
     }
 };
 
-var XnxxModule = {
-    canHandleUrl: function(url) {
-        var validPatterns = [
-            ".*xnxx.com/.*"
-        ];
-        return urlMatchesOneOfPatterns(url, validPatterns);
-    },
-    getMediaType: function() {
-        return 'video';
-    },
-    getPluginPath: function(url, callback) {
-        chrome.tabs.getSelected(null, function(tab){
-            chrome.tabs.sendMessage(tab.id, {action: 'getVideoSrc'}, function (response) {
-                if (response) {
-                    callback(response.videoSrc);
-                }
-            });
-        });
-    }
-};
-
-var SeasonvarModule = {
-    canHandleUrl: function(url) {
-        var validPatterns = [
-            "^https?://(www\\.)?seasonvar\\.ru/serial-\\d+-"
-        ];
-        return urlMatchesOneOfPatterns(url, validPatterns);
-    },
-    getMediaType: function() {
-        return 'video';
-    },
-    getPluginPath: function(url, getAddOnVersion, callback) {
-        chrome.tabs.sendMessage(currentTabId, {action: 'getVideoSrc'}, function (response) {
-            if (response) {
-                callback(response.videoSrc);
-            }
-        });
-    }
-};
-
 var allModules = [
     AcestreamModule,
     AnimeLabModule,
@@ -896,8 +954,10 @@ var allModules = [
     MixcloudModule,
     Mp4UploadModule,
     MyCloudPlayersModule,
+    PornhubModule,
     RuutuModule,
     SeasonvarModule,
+    SolarmoviezModule,
     SopcastModule,
     SoundcloudModule,
     StreamCloudModule,
@@ -908,6 +968,7 @@ var allModules = [
     UrgantShowModule,
     VesselLabModule,
     VimeoModule,
+    VivoModule,
     XnxxModule,
     YleAreenaModule,
     YoutubeModule,

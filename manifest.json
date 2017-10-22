@@ -1,10 +1,10 @@
 {
     "manifest_version": 2,
-    "version": "1.8.1",
+    "version": "1.9.0",
     "name": "Play to Kodi",
     "description": "Play, queue and remote control your favourite online media on Kodi / XBMC.",
     "options_page": "options.html",
-    "permissions": [ "tabs", "http://*/*", "contextMenus" ],
+    "permissions": [ "tabs", "*://www.googleapis.com/*", "http://*/*", "contextMenus" ],
     "browser_action": {
         "default_icon": "images/icon.png",
         "default_popup": "remote.html"
@@ -80,8 +80,17 @@
         "matches": ["*://*.seasonvar.ru/*"],
         "js": ["js/jquery-2.1.4.min.js", "js/content_scripts/seasonvar-content-scripts.js"]
     }, {
+        "matches": ["*://solarmoviez.to/*"],
+        "js": ["js/jquery-2.1.4.min.js", "js/content_scripts/solarmoviez-content-scripts.js"]
+    }, {
         "matches": ["*://*.twitch.tv/*"],
         "js": ["js/jquery-2.1.4.min.js", "js/content_scripts/twitch-content-scripts.js"]
+    }, {
+        "matches": ["*://vivo.sx/*"],
+        "js": ["js/jquery-2.1.4.min.js", "js/content_scripts/vivo-content-scripts.js"]
+    }, {
+        "matches": ["*://*.pornhub.com/*"],
+        "js": ["js/jquery-2.1.4.min.js", "js/content_scripts/pornhub-content-scripts.js"]
     }],
     "web_accessible_resources": [
         "images/*"
