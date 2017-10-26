@@ -69,11 +69,9 @@ function getURLParameter(tabUrl, sParam) {
 // On page thumbnail actions.
 
 var observer = new MutationObserver(mutations => {
-    const initButtonNodes = ['YTD-ITEM-SECTION-RENDERER', 'YTD-PLAYLIST-VIDEO-RENDERER', 'YTD-GRID-VIDEO-RENDERER'];
-
     for (const mutation of mutations) {
         for (const node of mutation.addedNodes) {
-            if (initButtonNodes.indexOf(node.nodeName) >= 0) initButtons(node);
+            if (node.nodeName.match(/^YTD.*VIDEO-RENDERER$/)) initButtons(node);
         }
     }
 });
