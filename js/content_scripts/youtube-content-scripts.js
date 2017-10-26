@@ -120,7 +120,9 @@ function createThumbnailButton(title, image, action, href) {
     button.innerHTML = `<iron-icon src="${image}">`;
 
     button.onclick = () => {
-        chrome.extension.sendMessage({action: action, url: href}, () => {});
+        button.style.cursor = 'wait';
+
+        chrome.extension.sendMessage({action: action, url: href}, () => button.style.cursor = 'pointer');
 
         return false;
     };
