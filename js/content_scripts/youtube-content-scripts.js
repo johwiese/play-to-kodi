@@ -64,3 +64,65 @@ function getURLParameter(tabUrl, sParam) {
     }
     return null;
 }
+
+
+// On page thumbnail actions.
+
+var observer = new MutationObserver(mutations => {
+    const initButtonNodes = ['YTD-ITEM-SECTION-RENDERER', 'YTD-PLAYLIST-VIDEO-RENDERER', 'YTD-GRID-VIDEO-RENDERER'];
+
+    for (const mutation of mutations) {
+        for (const node of mutation.addedNodes) {
+            if (initButtonNodes.indexOf(node.nodeName) >= 0) initButtons(node);
+        }
+    }
+});
+
+observer.observe(document, {
+    childList: true,
+    subtree: true,
+});
+
+initButtons(document);
+
+function initButtons(parent) {
+    for (const thumbnail of parent.querySelectorAll('ytd-thumbnail')) {
+        if (thumbnail.querySelector('.ptk-thumbnail-buttons')) continue;
+
+        const href = (thumbnail.querySelector('a#thumbnail') || {}).href;
+
+        thumbnail.appendChild(createThumbnailButtons(thumbnail, href));
+    }
+}
+
+function createThumbnailButtons(thumbnail, href) {
+    const iconsBaseUrl = 'https://storage.googleapis.com/material-icons/external-assets/v4/icons/svg';
+
+    const container = document.createElement('div');
+
+    container.className = 'ptk-thumbnail-buttons';
+    container.style.cssText = 'width: 108px; height: 36px; margin: auto; z-index: 100; position: absolute; top: 0; left: 0; right: 0; bottom: 20px;';
+
+    container.appendChild(createThumbnailButton(`${iconsBaseUrl}/ic_play_arrow_white_24px.svg`, 'playThis', href));
+    container.appendChild(createThumbnailButton(`${iconsBaseUrl}/ic_playlist_play_white_24px.svg`, 'playThisNext', href));
+    container.appendChild(createThumbnailButton(`${iconsBaseUrl}/ic_playlist_add_white_24px.svg`, 'queueThis', href));
+
+    return container;
+}
+
+function createThumbnailButton(image, action, href) {
+    const button = document.createElement('a');
+
+    button.className = 'ptk-thumbnail-button';
+    button.style.cssText = 'width: 28px; height: 28px; margin: 4px; cursor: pointer; opacity: 0.8; display: inline-flex; align-items: center; justify-content: center; border-radius: 2px; background-color: #111;';
+
+    button.innerHTML = `<iron-icon src="${image}">`;
+
+    button.onclick = () => {
+        chrome.extension.sendMessage({action: action, url: href}, () => {});
+
+        return false;
+    };
+
+    return button;
+}
