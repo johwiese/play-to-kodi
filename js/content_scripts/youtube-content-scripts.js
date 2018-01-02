@@ -97,7 +97,7 @@ function createThumbnailButtons() {
     const container = document.createElement('div');
 
     container.className = 'ptk-thumbnail-buttons';
-    container.style.cssText = 'width: 108px; height: 36px; margin: auto; z-index: 100; position: absolute; top: 0; left: 0; right: 0; bottom: 20px;';
+    container.style.cssText = 'width: 96px; height: 32px; padding: 2px; margin: auto; z-index: 100; position: absolute; top: 0; left: 0; right: 0; bottom: 20px;';
 
     container.appendChild(createThumbnailButton('Play now', `${iconsBaseUrl}/ic_play_arrow_white_24px.svg`, 'playThis'));
     container.appendChild(createThumbnailButton('Play this Next', `${iconsBaseUrl}/ic_playlist_play_white_24px.svg`, 'playThisNext'));
@@ -110,7 +110,7 @@ function createThumbnailButton(title, image, action) {
     const button = document.createElement('a');
 
     button.className = 'ptk-thumbnail-button';
-    button.style.cssText = 'width: 28px; height: 28px; margin: 4px; cursor: pointer; opacity: 0.8; display: inline-flex; align-items: center; justify-content: center; border-radius: 2px; background-color: #111;';
+    button.style.cssText = 'width: 28px; height: 28px; margin: 2px; cursor: pointer; opacity: 0.8; display: inline-flex; align-items: center; justify-content: center; border-radius: 2px; background-color: #111;';
 
     button.title = title;
     button.innerHTML = `<iron-icon src="${image}">`;
