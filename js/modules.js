@@ -868,7 +868,7 @@ var YoutubeModule = {
 
             if (url.match('list=([^&]+)')) {
                 var playlistId = url.match('list=([^&]+)')[1];
-                callback('plugin://plugin.video.youtube/playlist/' + playlistId + '/', true);
+                callback('plugin://plugin.video.youtube/playlist/' + playlistId.replace(/^WL$/, ' WL') + '/', true);
                 return;
             }
 
