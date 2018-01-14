@@ -133,7 +133,10 @@ function createThumbnailButton(title, image, action) {
 
         button.style.cursor = 'wait';
 
-        chrome.extension.sendMessage({action: action, url: (button.parentNode.parentNode.querySelector('a#thumbnail') || {}).href}, () => button.style.cursor = 'pointer');
+        // Remove all none video parameters (playlist, index), since they would start a different action!
+        const href = ((button.parentNode.parentNode.querySelector('a#thumbnail') || {}).href || '').replace(/&?[^\?v=&]+=[^&]+&?/g, '');
+
+        chrome.extension.sendMessage({action: action, url: href}, () => button.style.cursor = 'pointer');
 
         return false;
     };
