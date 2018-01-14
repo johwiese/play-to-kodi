@@ -847,6 +847,7 @@ var YleAreenaModule = {
 var YoutubeModule = {
     canHandleUrl: function(url) {
         var validPatterns = [
+            ".*youtube.com/playlist.*",
             ".*youtube.com/watch.*",
             ".*youtu.be/.*"
         ];
@@ -863,6 +864,12 @@ var YoutubeModule = {
                 || (parseInt(versionNumbers[0]) >= 5 && parseInt(versionNumbers[1]) > 3)
                 || (parseInt(versionNumbers[0]) >= 5 && parseInt(versionNumbers[1]) >= 3 && parseInt(versionNumbers[2]) >= 6)) {
                 pluginUrl = 'plugin://plugin.video.youtube/play/?video_id=';
+            }
+
+            if (url.match('list=([^&]+)')) {
+                var playlistId = url.match('list=([^&]+)')[1];
+                callback('plugin://plugin.video.youtube/playlist/' + playlistId + '/', true);
+                return;
             }
 
             if (url.match('v=([^&]+)')) {

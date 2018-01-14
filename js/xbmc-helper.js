@@ -95,7 +95,7 @@ function ajaxPost(data, callback, timeout) {
     var url = getURL();
     var fullPath = url + "/jsonrpc";
     var credentials = getCredentials();
-    var defaultTimeout = 5000;
+    var defaultTimeout = 10000;
     if (timeout) {
         defaultTimeout = timeout;
     }
