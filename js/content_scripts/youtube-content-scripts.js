@@ -115,7 +115,11 @@ function createThumbnailButton(title, image, action) {
     button.title = title;
     button.innerHTML = `<iron-icon src="${image}">`;
 
-    button.onclick = () => {
+    button.onclick = (event) => {
+        event.cancelBubble = true;
+
+        if (event.stopPropagation) event.stopPropagation();
+
         button.style.cursor = 'wait';
 
         chrome.extension.sendMessage({action: action, url: (button.parentNode.parentNode.querySelector('a#thumbnail') || {}).href}, () => button.style.cursor = 'pointer');
