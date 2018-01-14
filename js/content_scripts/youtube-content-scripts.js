@@ -71,7 +71,9 @@ function getURLParameter(tabUrl, sParam) {
 var observer = new MutationObserver(mutations => {
     for (const mutation of mutations) {
         for (const node of mutation.addedNodes) {
-            if (node.nodeName.match(/^YTD.*VIDEO-RENDERER$/)) initButtons(node);
+            if (node.nodeName.match(/^YTD.*VIDEO-RENDERER$/)) initVideoButtons(node);
+            if (node.nodeName.match(/^YTD.*PLAYLIST-RENDERER$/)) initPlaylistButtons(node);
+            if (node.nodeName.match(/^YTD-PLAYLIST-SIDEBAR-PRIMARY-INFO-RENDERER$/)) initPlaylistButtons(node);
         }
     }
 });
@@ -81,10 +83,19 @@ observer.observe(document, {
     subtree: true,
 });
 
-initButtons(document);
+initVideoButtons(document);
+initPlaylistButtons(document);
 
-function initButtons(parent) {
+function initVideoButtons(parent) {
     for (const thumbnail of parent.querySelectorAll('ytd-thumbnail')) {
+        if (thumbnail.querySelector('.ptk-thumbnail-buttons')) continue;
+
+        thumbnail.appendChild(createThumbnailButtons());
+    }
+}
+
+function initPlaylistButtons(parent) {
+    for (const thumbnail of parent.querySelectorAll('ytd-playlist-thumbnail')) {
         if (thumbnail.querySelector('.ptk-thumbnail-buttons')) continue;
 
         thumbnail.appendChild(createThumbnailButtons());
