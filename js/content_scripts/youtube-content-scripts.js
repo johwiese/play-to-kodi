@@ -90,7 +90,8 @@ function initVideoButtons(parent) {
     for (const thumbnail of parent.querySelectorAll('ytd-thumbnail')) {
         if (thumbnail.querySelector('.ptk-thumbnail-buttons')) continue;
 
-        thumbnail.appendChild(createThumbnailButtons());
+        // Remove all none video parameters (playlist, index), since they would start a different action!
+        thumbnail.appendChild(createThumbnailButtons((href) => href.replace(/&?[^?=&]+(?<!v)=[^&\n]+&?/g, '')));
     }
 }
 
@@ -98,11 +99,12 @@ function initPlaylistButtons(parent) {
     for (const thumbnail of parent.querySelectorAll('ytd-playlist-thumbnail')) {
         if (thumbnail.querySelector('.ptk-thumbnail-buttons')) continue;
 
-        thumbnail.appendChild(createThumbnailButtons());
+        // Remove all none playlist parameters (v), since they would start a different action!
+        thumbnail.appendChild(createThumbnailButtons((href) => href.replace(/&?[^?=&]+(?<!list)=[^&\n]+&?/g, '')));
     }
 }
 
-function createThumbnailButtons() {
+function createThumbnailButtons(hrefConverter) {
     const iconsBaseUrl = 'https://storage.googleapis.com/material-icons/external-assets/v4/icons/svg';
 
     const container = document.createElement('div');
@@ -110,14 +112,14 @@ function createThumbnailButtons() {
     container.className = 'ptk-thumbnail-buttons';
     container.style.cssText = 'width: 96px; height: 32px; padding: 2px; margin: auto; z-index: 100; position: absolute; top: 0; left: 0; right: 0; bottom: 20px;';
 
-    container.appendChild(createThumbnailButton('Play now', `${iconsBaseUrl}/ic_play_arrow_white_24px.svg`, 'playThis'));
-    container.appendChild(createThumbnailButton('Play this Next', `${iconsBaseUrl}/ic_playlist_play_white_24px.svg`, 'playThisNext'));
-    container.appendChild(createThumbnailButton('Queue', `${iconsBaseUrl}/ic_playlist_add_white_24px.svg`, 'queueThis'));
+    container.appendChild(createThumbnailButton('Play now', `${iconsBaseUrl}/ic_play_arrow_white_24px.svg`, 'playThis', hrefConverter));
+    container.appendChild(createThumbnailButton('Play this Next', `${iconsBaseUrl}/ic_playlist_play_white_24px.svg`, 'playThisNext', hrefConverter));
+    container.appendChild(createThumbnailButton('Queue', `${iconsBaseUrl}/ic_playlist_add_white_24px.svg`, 'queueThis', hrefConverter));
 
     return container;
 }
 
-function createThumbnailButton(title, image, action) {
+function createThumbnailButton(title, image, action, hrefConverter) {
     const button = document.createElement('a');
 
     button.className = 'ptk-thumbnail-button';
@@ -133,10 +135,9 @@ function createThumbnailButton(title, image, action) {
 
         button.style.cursor = 'wait';
 
-        // Remove all none video parameters (playlist, index), since they would start a different action!
-        const href = ((button.parentNode.parentNode.querySelector('a#thumbnail') || {}).href || '').replace(/&?[^\?v=&]+=[^&]+&?/g, '');
+        const href = (button.parentNode.parentNode.querySelector('a#thumbnail') || {}).href || '';
 
-        chrome.extension.sendMessage({action: action, url: href}, () => button.style.cursor = 'pointer');
+        chrome.extension.sendMessage({action: action, url: hrefConverter(href)}, () => button.style.cursor = 'pointer');
 
         return false;
     };
