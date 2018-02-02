@@ -189,7 +189,7 @@ function getTrackArtist() {
 }
 
 function getAlbumId() {
-    var dataId = $('.song-table[data-type="album"], .menu-displayed[data-type="album"]').data('id');
+    var dataId = $('.song-table[data-id!="queue"], .menu-displayed, .menu-anchor').closest('[data-type="album"]').data('id');
 
     if (dataId && (dataMatch = dataId.match('([^/]*)/([^/]+)/([^/]+)'))) {
         return dataMatch[1] || albums[dataMatch[2] + '/' + dataMatch[3]] || dataId;
@@ -199,7 +199,7 @@ function getAlbumId() {
 }
 
 function getArtistId() {
-    var dataId = $('.menu-displayed[data-type="artist"]').data('id');
+    var dataId = $('.menu-displayed, .menu-anchor').closest('[data-type="artist"]').data('id');
 
     if (dataId && (dataMatch = dataId.match('([^/]*)/([^/]+)'))) {
         return dataMatch[1] || artists[dataMatch[2]] || dataId;
@@ -209,19 +209,19 @@ function getArtistId() {
 }
 
 function getPlaylistId() {
-    var dataId = $('.song-table[data-type="pl"], .menu-displayed[data-type="pl"]').data('id');
+    var dataId = $('.song-table[data-id!="queue"], .menu-displayed, .menu-anchor').closest('[data-type="pl"]').data('id');
 
     return dataId;
 }
 
 function getAutoPlaylistId() {
-    var dataId = $('.song-table[data-type="ap"], .menu-displayed[data-type="ap"]').data('id');
+    var dataId = $('.song-table[data-id!="queue"], .menu-displayed, .menu-anchor').closest('[data-type="ap"]').data('id');
 
     return dataId;
 }
 
 function getStationId() {
-    var dataId = $('.info[data-type="wst"], .menu-displayed[data-type="wst"]').data('id');
+    var dataId = $('.info, .menu-displayed, .menu-anchor').closest('[data-type="wst"]').data('id');
 
     return dataId;
 }
